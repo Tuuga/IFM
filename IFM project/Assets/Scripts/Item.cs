@@ -2,5 +2,5 @@
 using System.Collections;
 
 public class Item : MonoBehaviour {
-	public string type;
+	public string itemName;
 }

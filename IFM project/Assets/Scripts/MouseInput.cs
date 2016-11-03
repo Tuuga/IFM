@@ -15,7 +15,6 @@ public class MouseInput : MonoBehaviour {
 
 	void Update () {
 		if (Input.GetKeyDown(KeyCode.Mouse0)) {
-
 			Vector2 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 			Collider2D[] col = Physics2D.OverlapPointAll(mouseWorldPos);
 
@@ -31,7 +30,7 @@ public class MouseInput : MonoBehaviour {
 					StopCoroutine(move);
 					c.GetComponent<Door>().ActivateDoor();
 				} else if (c.tag == "Item") {
-					inv.AddToInventory(c.GetComponent<Item>());
+					inv.AddToInventory(c.gameObject);
 				}
 			}
 		}
