@@ -10,6 +10,8 @@ public class PlayerMovement : MonoBehaviour {
 	public IEnumerator MoveToPos (Vector3 pos) {
 		isMoving = true;
 
+		pos.z = 0;
+
 		var playerToPos = pos - transform.position;
 		var dist = playerToPos.magnitude;
 		var dir = playerToPos.normalized;
