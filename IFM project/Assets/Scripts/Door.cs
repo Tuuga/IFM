@@ -9,6 +9,7 @@ public class Door : MonoBehaviour {
 
 	public Transform player;
 
+	// WIP
 	public void ActivateDoor () {
 		Vector3 newPos = new Vector3(cameraPos.position.x, cameraPos.position.y, Camera.main.transform.position.z);
 
