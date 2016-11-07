@@ -63,18 +63,18 @@ public class Inventory : MonoBehaviour {
 		foreach (Collider2D c in cols) {
 			col = c;
 		}
-		if (col == null || col.gameObject != selected.GetComponent<Item>().GetUseWith()) {
-			if (col != null)
-			print(col.gameObject.name);
+		
+		if (!col) {
 			Deselect();
 			return;
 		}
 
-		selected.GetComponent<IUsableInventory>().Use();
+		selected.GetComponent<IUsableInventory>().Use(col.GetComponent<Pointable>());
 		slots[items.IndexOf(selected)].sprite = empty;
 		items.Remove(selected);
 		UpdateSlotSprites();
 		Destroy(selected);
+		
 	}
 
 	void UpdateSlotSprites () {

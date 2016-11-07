@@ -59,7 +59,7 @@ public class MouseInput : MonoBehaviour {
 
 	public void LookAt () {
 		print("Looked at " + currentActionItem.name);
-		currentActionItem.GetComponent<Item>().LookAtItem();
+		//currentActionItem.GetComponent<Item>().LookAtItem();
 		CloseActionMenu();
 	}
 
