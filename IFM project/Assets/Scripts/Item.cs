@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Item : MonoBehaviour, IUsableInventory {
+public class Item : MonoBehaviour {
 
 	public void Use(Pointable withThis) {
 		var useWithArray = GetComponents<UseWith>();

@@ -6,6 +6,21 @@ public class PlayerMovement : MonoBehaviour {
 	public float movementSpeed;
 
 	bool isMoving;
+	IEnumerator move;
+
+	MouseInput mouse;
+
+	void Start () {
+		mouse = GetComponent<MouseInput>();
+	}
+
+	public void MoveToMousePos () {
+		if (GetIsMoving()) {							// If player already moving
+			StopCoroutine(move);						// Stop the coroutine
+		}
+		move = MoveToPos(mouse.GetMouseWorldPos());		// Save the coroutine
+		StartCoroutine(move);							// Call new coroutine
+	}
 
 	public IEnumerator MoveToPos (Vector3 pos) {
 		isMoving = true;

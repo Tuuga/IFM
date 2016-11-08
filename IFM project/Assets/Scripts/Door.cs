@@ -6,8 +6,9 @@ public class Door : MonoBehaviour {
 
 	public Transform cameraPos;
 	public Transform playerPos;
-
 	public Transform player;
+
+	bool locked;
 
 	// WIP
 	public void ActivateDoor () {

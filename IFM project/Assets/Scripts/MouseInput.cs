@@ -1,9 +1,11 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 public class MouseInput : MonoBehaviour {
 
 	public GameObject actionMenu;
+	public GameObject dialogBox;
 	public LayerMask mask;
 
 	PlayerMovement mov;
@@ -39,6 +41,8 @@ public class MouseInput : MonoBehaviour {
 			}
 			if (openMenu && !actionMenu.activeSelf) {
 				OpenActionMenu(currentActionItem);
+			} else if (!currentActionItem) {
+				CloseActionMenu();
 			}
 		}
 	}
@@ -48,24 +52,35 @@ public class MouseInput : MonoBehaviour {
 		actionMenu.SetActive(true);
 		// Change position to cursor
 		actionMenu.transform.position = Input.mousePosition + new Vector3(0, 50, 0);
-		// Set active item to g
 	}
 
 	public void PickUp () {
-		print("Picked up " + currentActionItem.name);
-		inv.AddToInventory(currentActionItem);
+		var addItem = currentActionItem.GetComponent<Item>();
+		if (addItem) {
+			inv.AddToInventory(addItem);
+		} else {
+			print("<color=red>No Item component</color>");
+		}
 		CloseActionMenu();
 	}
 
 	public void LookAt () {
-		print("Looked at " + currentActionItem.name);
-		//currentActionItem.GetComponent<Item>().LookAtItem();
+		var lookAtItem = currentActionItem.GetComponent<LookAt>();
+		if (lookAtItem) {
+			lookAtItem.ActivateText(dialogBox);
+		} else {
+			print("<color=red>No LookAt component</color>");
+		}
 		CloseActionMenu();
 	}
 
 	public void Use () {
-		print("Used " + currentActionItem.name);
-		currentActionItem.GetComponent<IUsableWorld>().Use();
+		var useItem = currentActionItem.GetComponent<StaticItem>();
+		if (useItem) {
+			useItem.Use();
+		} else {
+			print("<color=red>No StaticItem component</color>");
+		}
 		CloseActionMenu();
 	}
 
