@@ -8,7 +8,6 @@ public class LookAt : MonoBehaviour {
 	[TextArea]
 	public string lookAtText;
 	
-
 	public void ActivateText (GameObject dialogBox) {
 		StartCoroutine(DisplayText(dialogBox));
 	}

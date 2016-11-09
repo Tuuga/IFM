@@ -25,7 +25,7 @@ public class Inventory : MonoBehaviour {
 			items.Add(itemToAdd);
 
 			var slotChildImage = slots[items.Count - 1].transform.GetChild(0).GetComponent<Image>();
-			print(slotChildImage.name);
+
 			slotChildImage.sprite = itemToAdd.GetComponent<SpriteRenderer>().sprite;
 			slotChildImage.color = itemToAdd.GetComponent<SpriteRenderer>().color;
 
@@ -60,6 +60,10 @@ public class Inventory : MonoBehaviour {
 	void Deselect () {
 		selected.gameObject.SetActive(false);
 		selected = null;
+	}
+
+	public Item GetSelected () {
+		return selected;
 	}
 
 	public void UseSelected () {

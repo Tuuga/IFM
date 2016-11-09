@@ -5,16 +5,29 @@ using UnityEngine.UI;
 public class Door : MonoBehaviour {
 
 	public Transform cameraPos;
-	public Transform playerPos;
-	public Transform player;
+	public Transform otherDoor;
+	Transform player;
 
-	bool locked;
+	public bool locked;
+
+	void Start () {
+		player = GameObject.FindGameObjectWithTag("Player").transform;
+	}
 
 	// WIP
-	public void ActivateDoor () {
+	public void GoThrough () {
+		if (locked) {
+			print("Door is locked");
+			return;
+		}
+
 		Vector3 newPos = new Vector3(cameraPos.position.x, cameraPos.position.y, Camera.main.transform.position.z);
 
 		Camera.main.transform.position = newPos;
-		player.position = playerPos.position;
+		player.position = otherDoor.position;
+	}
+
+	public void Unlock () {
+		locked = false;
 	}
 }

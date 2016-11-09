@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using System.Collections;
 
 public class MouseInput : MonoBehaviour {
@@ -13,44 +14,38 @@ public class MouseInput : MonoBehaviour {
 
 	GameObject currentActionItem;
 
-	IEnumerator move;
-
 	void Start () {
 		mov = GetComponent<PlayerMovement>();
 		inv = GetComponent<Inventory>();
 	}
 
-	void Update () {
-		if (Input.GetKeyDown(KeyCode.Mouse0)) {
-
+	void Update() {
+		if (Input.GetKeyDown(KeyCode.Mouse0) && !EventSystem.current.IsPointerOverGameObject() && !inv.GetSelected()) {
 			var col = GetColliderUnderMouse();
+			var lastActionItem = currentActionItem;
 
-			bool openMenu = false;
+			currentActionItem = null;
 			foreach (Collider2D c in col) {
-				currentActionItem = null;
-				if (c.tag == "Ground") {
-					if (mov.GetIsMoving()) {					// If player already moving
-						StopCoroutine(move);					// Stop the coroutine
-					}
-					move = mov.MoveToPos(GetMouseWorldPos());	// Save the coroutine
-					StartCoroutine(move);						// Call new coroutine
-				} else if (c.tag == "Item") {
+				if (c.tag == "Activateble") {
 					currentActionItem = c.gameObject;
-					openMenu = true;
 				}
 			}
-			if (openMenu && !actionMenu.activeSelf) {
-				OpenActionMenu(currentActionItem);
-			} else if (!currentActionItem) {
+
+			if (lastActionItem != currentActionItem) {
+				if (currentActionItem) {
+					OpenActionMenu();
+				}
+			}
+
+			if (!currentActionItem) {
 				CloseActionMenu();
 			}
 		}
 	}
-
-	void OpenActionMenu (GameObject g) {
-		if (g == null) { return; }
+	
+	// WIP
+	void OpenActionMenu () {
 		actionMenu.SetActive(true);
-		// Change position to cursor
 		actionMenu.transform.position = Input.mousePosition + new Vector3(0, 50, 0);
 	}
 
@@ -86,7 +81,6 @@ public class MouseInput : MonoBehaviour {
 
 	public void CloseActionMenu() {
 		actionMenu.SetActive(false);
-		// Set active item to null
 		currentActionItem = null;
 	}
 
