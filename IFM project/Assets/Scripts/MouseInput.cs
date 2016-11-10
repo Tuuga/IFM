@@ -9,6 +9,8 @@ public class MouseInput : MonoBehaviour {
 	public GameObject dialogBox;
 	public LayerMask mask;
 
+	public float minDisToItemForAction;
+
 	PlayerMovement mov;
 	Inventory inv;
 
@@ -28,17 +30,40 @@ public class MouseInput : MonoBehaviour {
 			foreach (Collider2D c in col) {
 				if (c.tag == "Activateble") {
 					currentActionItem = c.gameObject;
+				} else if (c.tag == "Ground") {
+					mov.MovePlayer(GetMouseWorldPos());
 				}
 			}
 
+
+			// OLD
+			//if (lastActionItem != currentActionItem) {
+			//	if (currentActionItem) {
+			//		OpenActionMenu();
+			//	}
+			//}
+
+
+			// Open the action menu if close enough
+			// Else move player to items pos and open it after reached
 			if (lastActionItem != currentActionItem) {
 				if (currentActionItem) {
-					OpenActionMenu();
+					var actPos = currentActionItem.transform.position;
+					var playerToAct = actPos - transform.position;
+					playerToAct.z = 0;	// Just in case
+					var dist = playerToAct.magnitude;
+
+					if (dist > minDisToItemForAction) {
+						CloseActionMenu(false);
+						mov.MovePlayer(currentActionItem.transform.position, "OpenActionMenu", this);
+					} else {
+						OpenActionMenu();
+					}
 				}
 			}
-
+			
 			if (!currentActionItem) {
-				CloseActionMenu();
+				CloseActionMenu(true);
 			}
 		}
 	}
@@ -54,9 +79,10 @@ public class MouseInput : MonoBehaviour {
 		if (addItem) {
 			inv.AddToInventory(addItem);
 		} else {
+			// WIP
 			print("<color=red>No Item component</color>");
 		}
-		CloseActionMenu();
+		CloseActionMenu(true);
 	}
 
 	public void LookAt () {
@@ -64,9 +90,10 @@ public class MouseInput : MonoBehaviour {
 		if (lookAtItem) {
 			lookAtItem.ActivateText(dialogBox);
 		} else {
+			// WIP
 			print("<color=red>No LookAt component</color>");
 		}
-		CloseActionMenu();
+		CloseActionMenu(true);
 	}
 
 	public void Use () {
@@ -74,14 +101,17 @@ public class MouseInput : MonoBehaviour {
 		if (useItem) {
 			useItem.Use();
 		} else {
+			// WIP
 			print("<color=red>No StaticItem component</color>");
 		}
-		CloseActionMenu();
+		CloseActionMenu(true);
 	}
 
-	public void CloseActionMenu() {
+	public void CloseActionMenu(bool setCurrentItemNull) {
 		actionMenu.SetActive(false);
-		currentActionItem = null;
+		if (setCurrentItemNull) {
+			currentActionItem = null;
+		}
 	}
 
 	public Collider2D[] GetColliderUnderMouse () {

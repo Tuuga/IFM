@@ -6,6 +6,7 @@ public class Door : MonoBehaviour {
 
 	public Transform cameraPos;
 	public Transform otherDoor;
+	public int roomNumber;
 	Transform player;
 
 	public bool locked;
@@ -25,6 +26,8 @@ public class Door : MonoBehaviour {
 
 		Camera.main.transform.position = newPos;
 		player.position = otherDoor.position;
+		// WIP
+		player.GetComponent<PlayerMovement>().SetAtRoom(otherDoor.GetComponent<Door>().roomNumber);
 	}
 
 	public void Unlock () {
