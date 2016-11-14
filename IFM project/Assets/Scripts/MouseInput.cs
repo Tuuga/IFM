@@ -6,7 +6,9 @@ using System.Collections;
 public class MouseInput : MonoBehaviour {
 
 	public GameObject actionMenu;
+	GameObject pickUp, lookAt, use;
 	public GameObject dialogBox;
+	public Text highlightText;
 	public LayerMask mask;
 
 	public float minDisToItemForAction;
@@ -19,17 +21,29 @@ public class MouseInput : MonoBehaviour {
 	void Start () {
 		mov = GetComponent<PlayerMovement>();
 		inv = GetComponent<Inventory>();
+		pickUp = actionMenu.transform.Find("Pick Up").gameObject;
+		lookAt = actionMenu.transform.Find("Look At").gameObject;
+		use = actionMenu.transform.Find("Use").gameObject;
 	}
 
 	void Update() {
+		var col = GetColliderUnderMouse();
+
+		highlightText.text = "";
+		foreach (Collider2D c in col) {
+			if (c.tag == "Activateble") {
+				highlightText.text = c.name;
+			}
+		}
+		
 		if (Input.GetKeyDown(KeyCode.Mouse0) && !EventSystem.current.IsPointerOverGameObject() && !inv.GetSelected()) {
-			var col = GetColliderUnderMouse();
 			var lastActionItem = currentActionItem;
 
 			currentActionItem = null;
 			foreach (Collider2D c in col) {
 				if (c.tag == "Activateble") {
 					currentActionItem = c.gameObject;
+					SetActionMenuButtons();
 				} else if (c.tag == "Ground") {
 					mov.MovePlayer(GetMouseWorldPos());
 				}
@@ -112,6 +126,20 @@ public class MouseInput : MonoBehaviour {
 		if (setCurrentItemNull) {
 			currentActionItem = null;
 		}
+	}
+
+	void SetActionMenuButtons () {
+		if (currentActionItem.GetComponent<Item>()) {
+			pickUp.SetActive(true);
+		} else { pickUp.SetActive(false); }
+
+		if (currentActionItem.GetComponent<StaticItem>()) {
+			use.SetActive(true);
+		} else { use.SetActive(false); }
+
+		if (currentActionItem.GetComponent<LookAt>()) {
+			lookAt.SetActive(true);
+		} else { lookAt.SetActive(false); }
 	}
 
 	public Collider2D[] GetColliderUnderMouse () {
