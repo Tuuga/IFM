@@ -1,27 +1,36 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class PlayerMovement : MonoBehaviour {
 
 	public float movementSpeed;
 
-	// public for debug
-	public int atRoom;
+	// Public for debug
+	public List<Door> goneThrough = new List<Door>();
+
+	int currentRoom;
 
 	public Transform[] grounds;
 
 	bool isMoving;
 	IEnumerator move;
 
-	// DEBUG
-	void Update () {
-		if (Input.GetKeyDown(KeyCode.Space)) {
-			print(MaxYInRoom(atRoom));
-		}
+	EnemySpawner spawner;
+
+	void Start () {
+		spawner = GameObject.Find("EnemySpawner").GetComponent<EnemySpawner>();
 	}
 
-	public void SetAtRoom (int room) {
-		atRoom = room;
+	public int GetAtRoom () {
+		return currentRoom;
+	}
+
+	public void WentThroughDoor (Door d, int room) {
+		if (spawner.GetEnemySpawned()) {
+			goneThrough.Add(d);
+		}
+		currentRoom = room;
 	}
 
 	float MaxYInRoom (int roomIndex) {
@@ -53,7 +62,7 @@ public class PlayerMovement : MonoBehaviour {
 
 		pos.z = 0;
 
-		pos.y = Mathf.Clamp(pos.y, Mathf.NegativeInfinity, MaxYInRoom(atRoom));
+		pos.y = Mathf.Clamp(pos.y, Mathf.NegativeInfinity, MaxYInRoom(currentRoom));
 
 		var playerToPos = pos - transform.position;
 		var dist = playerToPos.magnitude;
@@ -73,9 +82,10 @@ public class PlayerMovement : MonoBehaviour {
 
 		pos.z = 0;
 
-		pos.y = Mathf.Clamp(pos.y, Mathf.NegativeInfinity, MaxYInRoom(atRoom));
+		pos.y = Mathf.Clamp(pos.y, Mathf.NegativeInfinity, MaxYInRoom(currentRoom));
 
 		var playerToPos = pos - transform.position;
+		
 		var dist = playerToPos.magnitude;
 		var dir = playerToPos.normalized;
 

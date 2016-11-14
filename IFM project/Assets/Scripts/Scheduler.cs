@@ -16,8 +16,6 @@ struct ScheduleItem {
 	}
 }
 
-
-
 public class Scheduler : MonoBehaviour {
 	List<ScheduleItem> actions = new List<ScheduleItem>();
 	public float defaultDelay = 2f;

@@ -15,12 +15,15 @@ public class MouseInput : MonoBehaviour {
 
 	PlayerMovement mov;
 	Inventory inv;
+	Hiding hiding;
 
 	GameObject currentActionItem;
 
 	void Start () {
 		mov = GetComponent<PlayerMovement>();
 		inv = GetComponent<Inventory>();
+		hiding = GetComponent<Hiding>();
+
 		pickUp = actionMenu.transform.Find("Pick Up").gameObject;
 		lookAt = actionMenu.transform.Find("Look At").gameObject;
 		use = actionMenu.transform.Find("Use").gameObject;
@@ -43,36 +46,24 @@ public class MouseInput : MonoBehaviour {
 			foreach (Collider2D c in col) {
 				if (c.tag == "Activateble") {
 					currentActionItem = c.gameObject;
+					hiding.UnHide();
 					SetActionMenuButtons();
-				} else if (c.tag == "Ground") {
-					mov.MovePlayer(GetMouseWorldPos());
 				}
 			}
 
-
-			// OLD
-			//if (lastActionItem != currentActionItem) {
-			//	if (currentActionItem) {
-			//		OpenActionMenu();
-			//	}
-			//}
+			if (col.Length == 0) {
+				mov.MovePlayer(GetMouseWorldPos());
+				hiding.UnHide();
+			}
 
 
 			// Open the action menu if close enough
 			// Else move player to items pos and open it after reached
 			if (lastActionItem != currentActionItem) {
 				if (currentActionItem) {
-					var actPos = currentActionItem.transform.position;
-					var playerToAct = actPos - transform.position;
-					playerToAct.z = 0;	// Just in case
-					var dist = playerToAct.magnitude;
 
-					if (dist > minDisToItemForAction) {
-						CloseActionMenu(false);
-						mov.MovePlayer(currentActionItem.transform.position, "OpenActionMenu", this);
-					} else {
-						OpenActionMenu();
-					}
+					CloseActionMenu(false);
+					mov.MovePlayer(GetWalkTarget(currentActionItem) , "OpenActionMenu", this);
 				}
 			}
 			
@@ -85,7 +76,7 @@ public class MouseInput : MonoBehaviour {
 	// WIP
 	void OpenActionMenu () {
 		actionMenu.SetActive(true);
-		actionMenu.transform.position = Input.mousePosition + new Vector3(0, 50, 0);
+		actionMenu.transform.position = Camera.main.WorldToScreenPoint(currentActionItem.transform.position) + new Vector3(0, 50, 0);
 	}
 
 	public void PickUp () {
@@ -148,5 +139,14 @@ public class MouseInput : MonoBehaviour {
 
 	public Vector3 GetMouseWorldPos () {
 		return Camera.main.ScreenToWorldPoint(Input.mousePosition);
+	}
+
+	Vector2 GetWalkTarget (GameObject g) {
+		// TODO: Check for custom walk target
+		var sr = g.GetComponentInChildren<SpriteRenderer>();
+		if (!sr)
+			return g.transform.position;
+		var b = sr.bounds;
+		return new Vector2(b.center.x, b.min.y - 0.2f);
 	}
 }
