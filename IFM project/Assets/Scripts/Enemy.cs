@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Enemy : MonoBehaviour {
 
@@ -8,28 +9,44 @@ public class Enemy : MonoBehaviour {
 
 	Hiding playerHiding;
 	PlayerMovement mov;
+	RoomManager rm;
 
-	int atRoom;
+	Room atRoom;
 
-	void Start () {
+	void Awake () {
 		playerHiding = player.GetComponent<Hiding>();
 		mov = player.GetComponent<PlayerMovement>();
+		rm = GameObject.Find("RoomManager").GetComponent<RoomManager>();
+		atRoom = rm.GetRoomIn(transform);
 	}
 
-	void Update () {
-		if (mov.GetAtRoom() == atRoom) {
-			transform.position += GetDirToPlayer() * movementSpeed * Time.deltaTime;
+	void Update() {
+
+		// WIP
+		if (mov.GetAtRoom() == atRoom) {																	// Player and monster in the same room
+			if (playerHiding.IsHidden()) {																	// Player is hidden
+				print("Player is hidden");
+			} else {																						// Player is not hidden
+				transform.position += DirTo(player.transform) * movementSpeed * Time.deltaTime;
+			}
+		} else {																							// Player and monster in different rooms
+			if (Vector3.Distance(transform.position, mov.GetGoneThrough().transform.position) > 0.5f) {		// Monster not at the door
+				transform.position += DirTo(mov.GetGoneThrough().transform) * movementSpeed * Time.deltaTime;
+			} else {																						// Monster at the door
+				transform.position = mov.GetGoneThrough().otherDoor.position;
+				atRoom = rm.GetRoomIn(transform);
+			}
 		}
 	}
 
-	Vector3 GetDirToPlayer () {
-		var dir = player.transform.position - transform.position;
+	Vector3 DirTo(Transform t) {
+		var dir = t.position - transform.position;
 		dir.z = 0;
 		dir.Normalize();
 		return dir;
 	}
 
-	public void SetAtRoom (int roomInt) {
-		atRoom = roomInt;
+	public Room GetAtRoom() {
+		return atRoom;
 	}
 }

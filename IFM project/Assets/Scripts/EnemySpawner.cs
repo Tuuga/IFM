@@ -7,7 +7,6 @@ public class EnemySpawner : MonoBehaviour {
 
 	bool enemySpawned;
 
-	// WIP
 	public void SpawnEnemyAt(Transform spawnPos) {
 		print("Enemy Spawned");
 		enemySpawned = true;

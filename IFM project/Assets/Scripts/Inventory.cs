@@ -37,7 +37,6 @@ public class Inventory : MonoBehaviour {
 	}
 
 	void Update () {
-		// WIP
 		if (selected) {
 			var pos = mouseInput.GetMouseWorldPos();
 			pos.z = 0;

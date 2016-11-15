@@ -3,13 +3,14 @@ using System.Collections;
 
 public class Hiding : MonoBehaviour {
 	bool hiding;
-	bool hidden;
+	public bool hidden;
 
 	Color normalColor;
 	public Color hiddenColor;
 
 	PlayerMovement mov;
 	SpriteRenderer sr;
+	public Enemy enemy;
 
 	void Start () {
 		mov = GetComponent<PlayerMovement>();
@@ -17,20 +18,21 @@ public class Hiding : MonoBehaviour {
 		normalColor = sr.color;
 	}
 
-	// WIP
 	public bool IsHidden () {
-		if (hiding /* &&  monster not in same room*/) {
-			hidden = true;
-		} else {
-			hidden = false;
-		}
-
 		return hidden;
 	}
 
 	public void Hide () {
 		hiding = true;
-		print("Hiding");
+
+		if (mov.GetAtRoom() != enemy.GetAtRoom()) {
+			hidden = true;
+		} else {
+			hidden = false;
+		}
+		print("Hidden? " + IsHidden());
+		print("Player: " + mov.GetAtRoom());
+		print("Enemy: " + enemy.GetAtRoom());
 
 		sr.color = hiddenColor;
 	}
@@ -40,6 +42,7 @@ public class Hiding : MonoBehaviour {
 		if (!hiding) return;
 
 		hiding = false;
+		hidden = false;
 		print("Not Hiding");
 
 		sr.color = normalColor;

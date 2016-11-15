@@ -81,34 +81,19 @@ public class MouseInput : MonoBehaviour {
 
 	public void PickUp () {
 		var addItem = currentActionItem.GetComponent<Item>();
-		if (addItem) {
-			inv.AddToInventory(addItem);
-		} else {
-			// WIP
-			print("<color=red>No Item component</color>");
-		}
+		inv.AddToInventory(addItem);
 		CloseActionMenu(true);
 	}
 
 	public void LookAt () {
 		var lookAtItem = currentActionItem.GetComponent<LookAt>();
-		if (lookAtItem) {
-			lookAtItem.ActivateText(dialogBox);
-		} else {
-			// WIP
-			print("<color=red>No LookAt component</color>");
-		}
+		lookAtItem.ActivateText(dialogBox);
 		CloseActionMenu(true);
 	}
 
 	public void Use () {
 		var useItem = currentActionItem.GetComponent<StaticItem>();
-		if (useItem) {
-			useItem.Use();
-		} else {
-			// WIP
-			print("<color=red>No StaticItem component</color>");
-		}
+		useItem.Use();
 		CloseActionMenu(true);
 	}
 

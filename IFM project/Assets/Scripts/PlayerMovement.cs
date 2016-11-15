@@ -7,9 +7,9 @@ public class PlayerMovement : MonoBehaviour {
 	public float movementSpeed;
 
 	// Public for debug
-	public List<Door> goneThrough = new List<Door>();
+	Door goneThrough;
 
-	int currentRoom;
+	Room atRoom;
 
 	public Transform[] grounds;
 
@@ -17,25 +17,32 @@ public class PlayerMovement : MonoBehaviour {
 	IEnumerator move;
 
 	EnemySpawner spawner;
+	RoomManager rm;
 
 	void Start () {
 		spawner = GameObject.Find("EnemySpawner").GetComponent<EnemySpawner>();
+		rm = GameObject.Find("RoomManager").GetComponent<RoomManager>();
+		atRoom = rm.GetRoomIn(transform);
 	}
 
-	public int GetAtRoom () {
-		return currentRoom;
+	public Room GetAtRoom () {
+		return atRoom;
 	}
 
-	public void WentThroughDoor (Door d, int room) {
+	public Door GetGoneThrough () {
+		return goneThrough;
+	}
+
+	public void WentThroughDoor (Door d) {
 		if (spawner.GetEnemySpawned()) {
-			goneThrough.Add(d);
+			goneThrough = d;
 		}
-		currentRoom = room;
+		atRoom = rm.GetRoomIn(transform);
 	}
 
-	float MaxYInRoom (int roomIndex) {
-		var pos = grounds[roomIndex].position;
-		var scale = grounds[roomIndex].lossyScale;
+	float MaxYInRoom (Room room) {
+		var pos = room.ground.position;
+		var scale = room.ground.lossyScale;
 		var y = pos.y + scale.y / 2;
 
 		return y;
@@ -62,7 +69,7 @@ public class PlayerMovement : MonoBehaviour {
 
 		pos.z = 0;
 
-		pos.y = Mathf.Clamp(pos.y, Mathf.NegativeInfinity, MaxYInRoom(currentRoom));
+		pos.y = Mathf.Clamp(pos.y, Mathf.NegativeInfinity, MaxYInRoom(atRoom));
 
 		var playerToPos = pos - transform.position;
 		var dist = playerToPos.magnitude;
@@ -82,7 +89,7 @@ public class PlayerMovement : MonoBehaviour {
 
 		pos.z = 0;
 
-		pos.y = Mathf.Clamp(pos.y, Mathf.NegativeInfinity, MaxYInRoom(currentRoom));
+		pos.y = Mathf.Clamp(pos.y, Mathf.NegativeInfinity, MaxYInRoom(atRoom));
 
 		var playerToPos = pos - transform.position;
 		
@@ -95,7 +102,6 @@ public class PlayerMovement : MonoBehaviour {
 
 			yield return new WaitForEndOfFrame();
 		}
-		print("Invoking " + method);
 		calledFrom.Invoke(method, 0f);
 		isMoving = false;
 	}
