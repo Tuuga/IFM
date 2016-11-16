@@ -10,18 +10,22 @@ public class Enemy : MonoBehaviour {
 	Hiding playerHiding;
 	PlayerMovement mov;
 	RoomManager rm;
-
+	Scheduler scheduler;
 	Room atRoom;
 
-	void Awake () {
+	bool attacking;
+
+	void Start () {
 		playerHiding = player.GetComponent<Hiding>();
 		mov = player.GetComponent<PlayerMovement>();
 		rm = GameObject.Find("RoomManager").GetComponent<RoomManager>();
 		atRoom = rm.GetRoomIn(transform);
+		//scheduler = GameObject.Find("Scheduler").GetComponent<Scheduler>();
 	}
 
 	void Update() {
-
+		if (!attacking) return;
+		
 		// WIP
 		if (mov.GetAtRoom() == atRoom) {																	// Player and monster in the same room
 			if (playerHiding.IsHidden()) {																	// Player is hidden
@@ -30,11 +34,14 @@ public class Enemy : MonoBehaviour {
 				transform.position += DirTo(player.transform) * movementSpeed * Time.deltaTime;
 			}
 		} else {																							// Player and monster in different rooms
-			if (Vector3.Distance(transform.position, mov.GetGoneThrough().transform.position) > 0.5f) {		// Monster not at the door
-				transform.position += DirTo(mov.GetGoneThrough().transform) * movementSpeed * Time.deltaTime;
+			if (Vector3.Distance(transform.position, mov.GetGoneThrough()[0].transform.position) > 0.5f) {	// Monster not at the door
+				transform.position += DirTo(mov.GetGoneThrough()[0].transform) * movementSpeed * Time.deltaTime;
 			} else {																						// Monster at the door
-				transform.position = mov.GetGoneThrough().otherDoor.position;
+				transform.position = mov.GetGoneThrough()[0].otherDoor.position;
 				atRoom = rm.GetRoomIn(transform);
+				if (mov.GetAtRoom() == atRoom) {
+					mov.ClearGoneThrough();
+				}
 			}
 		}
 	}
@@ -48,5 +55,15 @@ public class Enemy : MonoBehaviour {
 
 	public Room GetAtRoom() {
 		return atRoom;
+	}
+
+	public void Attack () {
+		attacking = true;
+	}
+
+	public void AttackSCH () {
+		gameObject.SetActive(true);
+		scheduler = GameObject.Find("Scheduler").GetComponent<Scheduler>();
+		scheduler.InvokeLater(this, "Attack", 0f);
 	}
 }

@@ -18,8 +18,6 @@ public class RoomManager : MonoBehaviour {
 				roomIn = c.GetComponent<Room>();
 			}
 		}
-
-		print(obj + " is in " + roomIn);
 		return roomIn;	
 	}
 }

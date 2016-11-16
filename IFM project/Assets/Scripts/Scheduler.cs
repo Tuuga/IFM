@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 struct ScheduleItem {
 	public float time;
-	public enum Action { Delay, TuukanTest };
+	public enum Action { Delay, Invoke };
 	public Action action;
 	public string strParam;
 	public MonoBehaviour objParam;
@@ -18,10 +18,8 @@ struct ScheduleItem {
 
 public class Scheduler : MonoBehaviour {
 	List<ScheduleItem> actions = new List<ScheduleItem>();
-	public float defaultDelay = 2f;
 	float timer;
-	ScheduleItem previousAction;
-	
+		
 	void Update () {
 		timer -= Time.deltaTime;
 		if (timer > 0 || actions.Count == 0) {
@@ -35,20 +33,20 @@ public class Scheduler : MonoBehaviour {
 			actions.RemoveAt(0);
 		}
 
-		if (a.action == ScheduleItem.Action.TuukanTest) {
+		if (a.action == ScheduleItem.Action.Invoke) {
 			timer = a.time;
-			print(a.strParam);
+			a.objParam.Invoke(a.strParam, 0);
 			actions.RemoveAt(0);
 		}
-	}
-	
-	public void TuukanTest (string s) {
-		ScheduleItem sch = new ScheduleItem(defaultDelay, ScheduleItem.Action.TuukanTest, s, null);
-		actions.Add(sch);
 	}
 
 	public void Delay(float f) {
 		ScheduleItem sch = new ScheduleItem(f, ScheduleItem.Action.Delay, "", null);
+		actions.Add(sch);
+	}
+
+	public void InvokeLater (MonoBehaviour obj, string method, float duration) {
+		ScheduleItem sch = new ScheduleItem(duration, ScheduleItem.Action.Invoke, method, obj);
 		actions.Add(sch);
 	}
 }

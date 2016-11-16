@@ -7,17 +7,30 @@ public class EnemySpawner : MonoBehaviour {
 
 	bool enemySpawned;
 
-	public void SpawnEnemyAt(Transform spawnPos) {
-		print("Enemy Spawned");
+	Scheduler scheduler;
+	Transform spawnPos;
+
+	void Start () {
+		scheduler = GameObject.Find("Scheduler").GetComponent<Scheduler>();
+	}
+
+	public void SpawnEnemyAt () {
 		enemySpawned = true;
 		enemy.SetActive(true);
 		enemy.transform.position = spawnPos.position;
 	}
 
 	public void DespawnEnemy () {
-		print("Enemy Despawned");
 		enemySpawned = false;
 		enemy.SetActive(false);
+	}
+
+	public void SpawnAtSCH (Transform spawnPos) {
+		this.spawnPos = spawnPos;
+		scheduler.InvokeLater(this, "SpawnEnemyAt", 1f);
+	}
+	public void DespawnSCH () {
+		scheduler.InvokeLater(this, "DespawnEnemy", 1f);
 	}
 
 	public bool GetEnemySpawned () {

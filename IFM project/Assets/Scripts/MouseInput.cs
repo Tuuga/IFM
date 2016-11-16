@@ -16,8 +16,10 @@ public class MouseInput : MonoBehaviour {
 	PlayerMovement mov;
 	Inventory inv;
 	Hiding hiding;
+	Scheduler scheduler;
 
 	GameObject currentActionItem;
+	bool canControl = true;
 
 	void Start () {
 		mov = GetComponent<PlayerMovement>();
@@ -27,6 +29,7 @@ public class MouseInput : MonoBehaviour {
 		pickUp = actionMenu.transform.Find("Pick Up").gameObject;
 		lookAt = actionMenu.transform.Find("Look At").gameObject;
 		use = actionMenu.transform.Find("Use").gameObject;
+		scheduler = GameObject.Find("Scheduler").GetComponent<Scheduler>();
 	}
 
 	void Update() {
@@ -39,7 +42,7 @@ public class MouseInput : MonoBehaviour {
 			}
 		}
 		
-		if (Input.GetKeyDown(KeyCode.Mouse0) && !EventSystem.current.IsPointerOverGameObject() && !inv.GetSelected()) {
+		if (Input.GetKeyDown(KeyCode.Mouse0) && !EventSystem.current.IsPointerOverGameObject() && !inv.GetSelected() && canControl) {
 			var lastActionItem = currentActionItem;
 
 			currentActionItem = null;
@@ -73,6 +76,17 @@ public class MouseInput : MonoBehaviour {
 		}
 	}
 	
+	public void DisableControls ()	{	canControl = false;	}
+	public void EnableControls ()	{	canControl = true;	}
+
+	public void DisableControlsSCH () {
+		scheduler.InvokeLater(this, "DisableControls", 0f);
+	}
+
+	public void EnableControlsSCH () {
+		scheduler.InvokeLater(this, "EnableControls", 0f);
+	}
+
 	// WIP
 	void OpenActionMenu () {
 		actionMenu.SetActive(true);

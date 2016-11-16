@@ -30,9 +30,6 @@ public class Hiding : MonoBehaviour {
 		} else {
 			hidden = false;
 		}
-		print("Hidden? " + IsHidden());
-		print("Player: " + mov.GetAtRoom());
-		print("Enemy: " + enemy.GetAtRoom());
 
 		sr.color = hiddenColor;
 	}

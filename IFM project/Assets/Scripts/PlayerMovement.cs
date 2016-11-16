@@ -5,9 +5,8 @@ using System.Collections.Generic;
 public class PlayerMovement : MonoBehaviour {
 
 	public float movementSpeed;
-
-	// Public for debug
-	Door goneThrough;
+	
+	List<Door> goneThrough = new List<Door>();
 
 	Room atRoom;
 
@@ -17,6 +16,7 @@ public class PlayerMovement : MonoBehaviour {
 	IEnumerator move;
 
 	EnemySpawner spawner;
+	public Enemy enemy;
 	RoomManager rm;
 
 	void Start () {
@@ -29,15 +29,18 @@ public class PlayerMovement : MonoBehaviour {
 		return atRoom;
 	}
 
-	public Door GetGoneThrough () {
+	public List<Door> GetGoneThrough () {
 		return goneThrough;
 	}
 
 	public void WentThroughDoor (Door d) {
 		if (spawner.GetEnemySpawned()) {
-			goneThrough = d;
+			goneThrough.Add(d);
 		}
 		atRoom = rm.GetRoomIn(transform);
+		if (enemy.GetAtRoom() == atRoom) {
+			ClearGoneThrough();
+		}
 	}
 
 	float MaxYInRoom (Room room) {
@@ -108,5 +111,9 @@ public class PlayerMovement : MonoBehaviour {
 
 	public bool GetIsMoving () {
 		return isMoving;
+	}
+
+	public void ClearGoneThrough() {
+		goneThrough = new List<Door>();
 	}
 }
