@@ -10,8 +10,6 @@ public class PlayerMovement : MonoBehaviour {
 
 	Room atRoom;
 
-	public Transform[] grounds;
-
 	bool isMoving;
 	IEnumerator move;
 

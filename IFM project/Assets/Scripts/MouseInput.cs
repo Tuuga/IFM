@@ -12,8 +12,6 @@ public class MouseInput : MonoBehaviour {
 	public Text highlightText;
 	public LayerMask mask;
 
-	public float minDisToItemForAction;
-
 	PlayerMovement mov;
 	Inventory inv;
 	Hiding hiding;

@@ -28,7 +28,6 @@ public class PlayerDialog : MonoBehaviour {
 	}
 
 	public void ShowTextSCH (string text) {
-		// TODO: remember what instance of ShowText was called
 		dialogs.Add(text);
 		scheduler.InvokeLater(this, "ShowText", 2f);
 	}
