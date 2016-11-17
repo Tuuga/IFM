@@ -3,7 +3,7 @@ using System.Collections;
 
 public class Hiding : MonoBehaviour {
 	bool hiding;
-	public bool hidden;
+	bool hidden;
 
 	Color normalColor;
 	public Color hiddenColor;

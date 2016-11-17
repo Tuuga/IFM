@@ -64,9 +64,17 @@ public class Enemy : MonoBehaviour {
 		attacking = true;
 	}
 
+	public void StopAttack () {
+		attacking = false;
+	}
+
 	public void AttackSCH () {
 		gameObject.SetActive(true);
 		scheduler = SchedulerUtility.scheduler;
 		scheduler.InvokeLater(this, "Attack", 0f);
+	}
+
+	public void StopAttackSCH () {
+		scheduler.InvokeLater(this, "StopAttack", 0f);
 	}
 }

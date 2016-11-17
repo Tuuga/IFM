@@ -7,6 +7,7 @@ public class MouseInput : MonoBehaviour {
 
 	public GameObject actionMenu;
 	GameObject pickUp, lookAt, use;
+	string defaultUseText;
 	public GameObject dialogBox;
 	public Text highlightText;
 	public LayerMask mask;
@@ -29,6 +30,7 @@ public class MouseInput : MonoBehaviour {
 		pickUp = actionMenu.transform.Find("Pick Up").gameObject;
 		lookAt = actionMenu.transform.Find("Look At").gameObject;
 		use = actionMenu.transform.Find("Use").gameObject;
+		defaultUseText = use.GetComponentInChildren<Text>().text;
 	}
 
 	void Update() {
@@ -131,12 +133,14 @@ public class MouseInput : MonoBehaviour {
 
 		if (staticItemComp) {
 			use.SetActive(true);
+			var useText = use.GetComponentInChildren<Text>();
 			if (staticItemComp.customUseText != "") { // If customUseText exists
-				use.GetComponentInChildren<Text>().text = staticItemComp.customUseText;
+				useText.text = staticItemComp.customUseText;
+			} else {
+				useText.text = defaultUseText;
 			}
 		} else {
 			use.SetActive(false);
-			use.GetComponentInChildren<Text>().text = "Use";
 		}
 
 		if (lookAtComp) {
