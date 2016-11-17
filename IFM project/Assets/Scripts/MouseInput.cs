@@ -139,9 +139,18 @@ public class MouseInput : MonoBehaviour {
 		return Camera.main.ScreenToWorldPoint(Input.mousePosition);
 	}
 
+	// Also called from enemy
 	public Vector2 GetWalkTarget (GameObject g) {
-		// TODO: Check for custom walk target
 		var sr = g.GetComponentInChildren<SpriteRenderer>();
+
+		// Checks for custom walk target and returns it if found
+		for (int i = 0; i < g.transform.childCount; i++) {
+			var c = g.transform.GetChild(i);
+			if (c.tag == "CustomWalkTarget") {
+				return c.position;
+			}
+		}
+
 		if (!sr)
 			return g.transform.position;
 		var b = sr.bounds;
