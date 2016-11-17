@@ -13,7 +13,7 @@ public class PlayerDialog : MonoBehaviour {
 
 	void Start () {
 		t = dialogBox.GetComponentInChildren<Text>();
-		scheduler = GameObject.Find("Scheduler").GetComponent<Scheduler>();
+		scheduler = SchedulerUtility.scheduler;
 	}
 
 	public void ShowText() {

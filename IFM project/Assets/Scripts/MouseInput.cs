@@ -25,11 +25,10 @@ public class MouseInput : MonoBehaviour {
 		mov = GetComponent<PlayerMovement>();
 		inv = GetComponent<Inventory>();
 		hiding = GetComponent<Hiding>();
-
+		scheduler = SchedulerUtility.scheduler;
 		pickUp = actionMenu.transform.Find("Pick Up").gameObject;
 		lookAt = actionMenu.transform.Find("Look At").gameObject;
 		use = actionMenu.transform.Find("Use").gameObject;
-		scheduler = GameObject.Find("Scheduler").GetComponent<Scheduler>();
 	}
 
 	void Update() {

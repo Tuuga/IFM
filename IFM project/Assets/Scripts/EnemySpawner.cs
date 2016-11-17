@@ -11,7 +11,7 @@ public class EnemySpawner : MonoBehaviour {
 	Transform spawnPos;
 
 	void Start () {
-		scheduler = GameObject.Find("Scheduler").GetComponent<Scheduler>();
+		scheduler = SchedulerUtility.scheduler;
 	}
 
 	public void SpawnEnemyAt () {

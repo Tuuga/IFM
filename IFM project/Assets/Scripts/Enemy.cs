@@ -20,9 +20,9 @@ public class Enemy : MonoBehaviour {
 		playerHiding = player.GetComponent<Hiding>();
 		mov = player.GetComponent<PlayerMovement>();
 		mI = player.GetComponent<MouseInput>();
+		scheduler = SchedulerUtility.scheduler;
 		rm = GameObject.Find("RoomManager").GetComponent<RoomManager>();
 		atRoom = rm.GetRoomIn(transform);
-		//scheduler = GameObject.Find("Scheduler").GetComponent<Scheduler>();
 	}
 
 	void Update() {
@@ -66,7 +66,7 @@ public class Enemy : MonoBehaviour {
 
 	public void AttackSCH () {
 		gameObject.SetActive(true);
-		scheduler = GameObject.Find("Scheduler").GetComponent<Scheduler>();
+		scheduler = SchedulerUtility.scheduler;
 		scheduler.InvokeLater(this, "Attack", 0f);
 	}
 }
