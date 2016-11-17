@@ -12,12 +12,14 @@ public class Enemy : MonoBehaviour {
 	RoomManager rm;
 	Scheduler scheduler;
 	Room atRoom;
+	MouseInput mI;
 
 	bool attacking;
 
 	void Start () {
 		playerHiding = player.GetComponent<Hiding>();
 		mov = player.GetComponent<PlayerMovement>();
+		mI = player.GetComponent<MouseInput>();
 		rm = GameObject.Find("RoomManager").GetComponent<RoomManager>();
 		atRoom = rm.GetRoomIn(transform);
 		//scheduler = GameObject.Find("Scheduler").GetComponent<Scheduler>();
@@ -31,13 +33,14 @@ public class Enemy : MonoBehaviour {
 			if (playerHiding.IsHidden()) {																	// Player is hidden
 				print("Player is hidden");
 			} else {																						// Player is not hidden
-				transform.position += DirTo(player.transform) * movementSpeed * Time.deltaTime;
+				transform.position += DirTo(player.transform.position) * movementSpeed * Time.deltaTime;
 			}
-		} else {																							// Player and monster in different rooms
-			if (Vector3.Distance(transform.position, mov.GetGoneThrough()[0].transform.position) > 0.5f) {	// Monster not at the door
-				transform.position += DirTo(mov.GetGoneThrough()[0].transform) * movementSpeed * Time.deltaTime;
+		} else {                                                                                            // Player and monster in different rooms
+			var doorPos = mI.GetWalkTarget(mov.GetGoneThrough()[0].gameObject);
+			if (Vector3.Distance(transform.position, doorPos) > 0.5f) {										// Monster not at the door
+				transform.position += DirTo(doorPos) * movementSpeed * Time.deltaTime;
 			} else {																						// Monster at the door
-				transform.position = mov.GetGoneThrough()[0].otherDoor.position;
+				transform.position = mI.GetWalkTarget(mov.GetGoneThrough()[0].otherDoor.gameObject);
 				atRoom = rm.GetRoomIn(transform);
 				if (mov.GetAtRoom() == atRoom) {
 					mov.ClearGoneThrough();
@@ -46,8 +49,8 @@ public class Enemy : MonoBehaviour {
 		}
 	}
 
-	Vector3 DirTo(Transform t) {
-		var dir = t.position - transform.position;
+	Vector3 DirTo(Vector3 vec) {
+		var dir = vec - transform.position;
 		dir.z = 0;
 		dir.Normalize();
 		return dir;
