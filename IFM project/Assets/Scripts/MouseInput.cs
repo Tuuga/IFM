@@ -35,9 +35,11 @@ public class MouseInput : MonoBehaviour {
 		var col = GetColliderUnderMouse();
 
 		highlightText.text = "";
+		GameObject mouseOverActivateble = null;
 		foreach (Collider2D c in col) {
 			if (c.tag == "Activateble") {
 				highlightText.text = c.name;
+				mouseOverActivateble = c.gameObject;
 			}
 		}
 		
@@ -45,12 +47,11 @@ public class MouseInput : MonoBehaviour {
 			var lastActionItem = currentActionItem;
 
 			currentActionItem = null;
-			foreach (Collider2D c in col) {
-				if (c.tag == "Activateble") {
-					currentActionItem = c.gameObject;
-					hiding.UnHide();
-					SetActionMenuButtons();
-				}
+			
+			if (mouseOverActivateble) {
+				currentActionItem = mouseOverActivateble;
+				hiding.UnHide();
+				SetActionMenuButtons();
 			}
 
 			if (col.Length == 0) {
@@ -118,17 +119,31 @@ public class MouseInput : MonoBehaviour {
 	}
 
 	void SetActionMenuButtons () {
-		if (currentActionItem.GetComponent<Item>()) {
+		var itemComp = currentActionItem.GetComponent<Item>();
+		var staticItemComp = currentActionItem.GetComponent<StaticItem>();
+		var lookAtComp = currentActionItem.GetComponent<LookAt>();
+
+		if (itemComp) {
 			pickUp.SetActive(true);
-		} else { pickUp.SetActive(false); }
+		} else {
+			pickUp.SetActive(false);
+		}
 
-		if (currentActionItem.GetComponent<StaticItem>()) {
+		if (staticItemComp) {
 			use.SetActive(true);
-		} else { use.SetActive(false); }
+			if (staticItemComp.customUseText != "") { // If customUseText exists
+				use.GetComponentInChildren<Text>().text = staticItemComp.customUseText;
+			}
+		} else {
+			use.SetActive(false);
+			use.GetComponentInChildren<Text>().text = "Use";
+		}
 
-		if (currentActionItem.GetComponent<LookAt>()) {
+		if (lookAtComp) {
 			lookAt.SetActive(true);
-		} else { lookAt.SetActive(false); }
+		} else {
+			lookAt.SetActive(false);
+		}
 	}
 
 	public Collider2D[] GetColliderUnderMouse () {
