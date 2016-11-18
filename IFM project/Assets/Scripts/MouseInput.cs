@@ -59,14 +59,11 @@ public class MouseInput : MonoBehaviour {
 				hiding.UnHide();
 			}
 
-
-			// Open the action menu if close enough
-			// Else move player to items pos and open it after reached
+			// Move player to items pos and open actionmenu after reached
 			if (lastActionItem != currentActionItem) {
 				if (currentActionItem) {
-
 					CloseActionMenu(false);
-					mov.MovePlayer(GetWalkTarget(currentActionItem) , "OpenActionMenu", this);
+					mov.MovePlayer(GetWalkTarget(currentActionItem), this, "OpenActionMenu");
 				}
 			}
 			
@@ -76,8 +73,12 @@ public class MouseInput : MonoBehaviour {
 		}
 	}
 	
-	public void DisableControls ()	{	canControl = false;	}
-	public void EnableControls ()	{	canControl = true;	}
+	public void DisableControls () {
+		canControl = false;
+	}
+	public void EnableControls () {
+		canControl = true;
+	}
 
 	public void DisableControlsSCH () {
 		scheduler.InvokeLater(this, "DisableControls", 0f);
@@ -129,7 +130,7 @@ public class MouseInput : MonoBehaviour {
 			pickUp.SetActive(false);
 		}
 
-		if (staticItemComp) {
+		if (staticItemComp && staticItemComp.active) {
 			use.SetActive(true);
 			var useText = use.GetComponentInChildren<Text>();
 			if (staticItemComp.customUseText != "") { // If customUseText exists

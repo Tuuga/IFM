@@ -7,6 +7,8 @@ public class LookAt : MonoBehaviour {
 	public float textTime;
 	[TextArea]
 	public string lookAtText;
+
+	// TODO: Closeup look at the item
 	
 	public void ActivateText (GameObject dialogBox) {
 		StartCoroutine(DisplayText(dialogBox));

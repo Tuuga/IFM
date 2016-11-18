@@ -6,22 +6,31 @@ public class Enemy : MonoBehaviour {
 
 	public GameObject player;
 	public float movementSpeed;
+	public float playerKillRange = 0.5f;
 
 	Hiding playerHiding;
 	PlayerMovement mov;
+	PlayerDeath pd;
+
 	RoomManager rm;
 	Scheduler scheduler;
 	Room atRoom;
 	MouseInput mI;
+	EnemySpawner enemySpawner;
 
 	bool attacking;
+	float searchTimer;
 
 	void Start () {
 		playerHiding = player.GetComponent<Hiding>();
 		mov = player.GetComponent<PlayerMovement>();
 		mI = player.GetComponent<MouseInput>();
+		pd = player.GetComponent<PlayerDeath>();
+
 		scheduler = SchedulerUtility.scheduler;
 		rm = GameObject.Find("RoomManager").GetComponent<RoomManager>();
+		enemySpawner = GameObject.Find("EnemySpawner").GetComponent<EnemySpawner>();
+
 		atRoom = rm.GetRoomIn(transform);
 	}
 
@@ -30,10 +39,20 @@ public class Enemy : MonoBehaviour {
 		
 		// WIP
 		if (mov.GetAtRoom() == atRoom) {																	// Player and monster in the same room
-			if (playerHiding.IsHidden()) {																	// Player is hidden
-				print("Player is hidden");
+			if (playerHiding.IsHidden()) {                                                                  // Player is hidden
+				searchTimer += Time.deltaTime;
+				if (searchTimer > 3f) {
+					searchTimer = 0;
+					StopAttack();
+					enemySpawner.DespawnEnemy();
+				}
 			} else {																						// Player is not hidden
 				transform.position += DirTo(player.transform.position) * movementSpeed * Time.deltaTime;
+				if (Vector3.Distance(transform.position, player.transform.position) < playerKillRange && !pd.IsDead()) {
+					pd.Die();
+					StopAttack();
+					enemySpawner.DespawnEnemy();
+				}
 			}
 		} else {                                                                                            // Player and monster in different rooms
 			var doorPos = mI.GetWalkTarget(mov.GetGoneThrough()[0].gameObject);

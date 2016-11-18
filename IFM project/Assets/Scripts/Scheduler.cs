@@ -40,7 +40,7 @@ public class Scheduler : MonoBehaviour {
 		}
 	}
 
-	public void Delay(float f) {
+	public void DelaySCH(float f) {
 		ScheduleItem sch = new ScheduleItem(f, ScheduleItem.Action.Delay, "", null);
 		actions.Add(sch);
 	}

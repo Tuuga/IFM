@@ -5,10 +5,6 @@ public class RoomManager : MonoBehaviour {
 
 	public LayerMask mask;
 
-	void Start () {
-		
-	}
-
 	public Room GetRoomIn (Transform obj) {
 		var cols = Physics2D.OverlapPointAll(obj.position, mask);
 		Room roomIn = null;

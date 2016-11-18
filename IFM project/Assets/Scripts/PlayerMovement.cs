@@ -9,6 +9,7 @@ public class PlayerMovement : MonoBehaviour {
 	List<Door> goneThrough = new List<Door>();
 
 	Room atRoom;
+	Room lastRoom;
 
 	bool isMoving;
 	IEnumerator move;
@@ -27,6 +28,10 @@ public class PlayerMovement : MonoBehaviour {
 		return atRoom;
 	}
 
+	public Room GetLastRoom() {
+		return lastRoom;
+	}
+
 	public List<Door> GetGoneThrough () {
 		return goneThrough;
 	}
@@ -35,6 +40,7 @@ public class PlayerMovement : MonoBehaviour {
 		if (spawner.GetEnemySpawned()) {
 			goneThrough.Add(d);
 		}
+		lastRoom = atRoom;
 		atRoom = rm.GetRoomIn(transform);
 		if (enemy.GetAtRoom() == atRoom) {
 			ClearGoneThrough();
@@ -50,42 +56,17 @@ public class PlayerMovement : MonoBehaviour {
 	}
 
 	public void MovePlayer (Vector3 pos) {
+		MovePlayer(pos, null, "");
+	}
+	public void MovePlayer(Vector3 pos, MonoBehaviour calledFrom, string method) {
 		if (GetIsMoving()) {							// If player already moving
 			StopCoroutine(move);						// Stop the coroutine
 		}
-		move = MoveToPos(pos);							// Save the coroutine
+		move = MoveToPos(pos, calledFrom, method);		// Save the coroutine
 		StartCoroutine(move);							// Call new coroutine
 	}
 
-	public void MovePlayer(Vector3 pos, string method, MonoBehaviour calledFrom) {
-		if (GetIsMoving()) {							// If player already moving
-			StopCoroutine(move);						// Stop the coroutine
-		}
-		move = MoveToPos(pos, method, calledFrom);		// Save the coroutine
-		StartCoroutine(move);							// Call new coroutine
-	}
-
-	public IEnumerator MoveToPos (Vector3 pos) {
-		isMoving = true;
-
-		pos.z = 0;
-
-		pos.y = Mathf.Clamp(pos.y, Mathf.NegativeInfinity, MaxYInRoom(atRoom));
-
-		var playerToPos = pos - transform.position;
-		var dist = playerToPos.magnitude;
-		var dir = playerToPos.normalized;
-		
-		while (dist > 0) {
-			transform.position += dir * movementSpeed * Time.deltaTime;
-			dist -= movementSpeed * Time.deltaTime;
-
-			yield return new WaitForEndOfFrame();
-		}
-		isMoving = false;
-	}
-
-	public IEnumerator MoveToPos(Vector3 pos, string method, MonoBehaviour calledFrom) {
+	public IEnumerator MoveToPos(Vector3 pos, MonoBehaviour calledFrom = null, string method = "") {
 		isMoving = true;
 
 		pos.z = 0;
@@ -103,7 +84,9 @@ public class PlayerMovement : MonoBehaviour {
 
 			yield return new WaitForEndOfFrame();
 		}
-		calledFrom.Invoke(method, 0f);
+		if (calledFrom) {
+			calledFrom.Invoke(method, 0f);
+		}
 		isMoving = false;
 	}
 
