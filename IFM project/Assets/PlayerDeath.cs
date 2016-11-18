@@ -19,6 +19,8 @@ public class PlayerDeath : MonoBehaviour {
 		enemySpawner = GameObject.Find("EnemySpawner").GetComponent<EnemySpawner>();
 	}
 	
+
+	// TODO: SCH version
 	public void Die () {
 		dead = true;
 		mi.DisableControls();
