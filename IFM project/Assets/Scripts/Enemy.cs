@@ -50,8 +50,6 @@ public class Enemy : MonoBehaviour {
 				transform.position += DirTo(player.transform.position) * movementSpeed * Time.deltaTime;
 				if (Vector3.Distance(transform.position, player.transform.position) < playerKillRange && !pd.IsDead()) {
 					pd.Die();
-					StopAttack();
-					enemySpawner.DespawnEnemy();
 				}
 			}
 		} else {                                                                                            // Player and monster in different rooms

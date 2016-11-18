@@ -18,9 +18,12 @@ public class PlayerMovement : MonoBehaviour {
 	public Enemy enemy;
 	RoomManager rm;
 
+	Animator anim;
+
 	void Start () {
 		spawner = GameObject.Find("EnemySpawner").GetComponent<EnemySpawner>();
 		rm = GameObject.Find("RoomManager").GetComponent<RoomManager>();
+		anim = GetComponentInChildren<Animator>();
 		atRoom = rm.GetRoomIn(transform);
 	}
 
@@ -40,11 +43,15 @@ public class PlayerMovement : MonoBehaviour {
 		if (spawner.GetEnemySpawned()) {
 			goneThrough.Add(d);
 		}
-		lastRoom = atRoom;
-		atRoom = rm.GetRoomIn(transform);
+		UpdateAtRoom();
 		if (enemy.GetAtRoom() == atRoom) {
 			ClearGoneThrough();
 		}
+	}
+
+	public void UpdateAtRoom () {
+		lastRoom = atRoom;
+		atRoom = rm.GetRoomIn(transform);
 	}
 
 	float MaxYInRoom (Room room) {
@@ -68,15 +75,34 @@ public class PlayerMovement : MonoBehaviour {
 
 	public IEnumerator MoveToPos(Vector3 pos, MonoBehaviour calledFrom = null, string method = "") {
 		isMoving = true;
-
 		pos.z = 0;
-
 		pos.y = Mathf.Clamp(pos.y, Mathf.NegativeInfinity, MaxYInRoom(atRoom));
 
 		var playerToPos = pos - transform.position;
 		
 		var dist = playerToPos.magnitude;
 		var dir = playerToPos.normalized;
+
+
+		ResetAnimBools();
+		// Checks what direction the player is moving towards
+		if (Mathf.Abs(dir.x) > Mathf.Abs(dir.y)) {
+			if (dir.x > 0) {
+				anim.SetBool("Right", true);
+				print("Going right");
+			} else {
+				anim.SetBool("Left", true);
+				print("Going left");
+			}
+		} else {
+			if (dir.y > 0) {
+				anim.SetBool("Up", true);
+				print("Going up");
+			} else {
+				anim.SetBool("Down", true);
+				print("Going down");
+			}
+		}
 
 		while (dist > 0) {
 			transform.position += dir * movementSpeed * Time.deltaTime;
@@ -87,7 +113,15 @@ public class PlayerMovement : MonoBehaviour {
 		if (calledFrom) {
 			calledFrom.Invoke(method, 0f);
 		}
+		ResetAnimBools();
 		isMoving = false;
+	}
+
+	void ResetAnimBools () {
+		anim.SetBool("Up", false);
+		anim.SetBool("Down", false);
+		anim.SetBool("Left", false);
+		anim.SetBool("Right", false);
 	}
 
 	public bool GetIsMoving () {
